@@ -7,7 +7,9 @@ def main():
     """
     hate_speech_classify = HateSpeechClassifier()
     hate_speech_classify.fetch_data('data/hate_speech_data.csv')
-    hate_speech_classify.validate_fetched_data()
+    hate_speech_classify.validate_loaded_data()
+    hate_speech_classify.preprocess_data()
+    hate_speech_classify.validate_loaded_data()
 
 
 if __name__ == "__main__":
