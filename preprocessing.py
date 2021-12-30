@@ -21,19 +21,19 @@ class PreprocessingData:
         try:
             find('tokenizers/stopwords.zip')
         except LookupError:
-            download('stopwords')
+            download('stopwords', quiet=True)
         try:
             find('tokenizers/punkt.zip')
         except LookupError:
-            download('punkt')
+            download('punkt', quiet=True)
         try:
             find('tokenizers/averaged_perceptron_tagger.zip')
         except LookupError:
-            download('averaged_perceptron_tagger')
+            download('averaged_perceptron_tagger', quiet=True)
         try:
             find('tokenizers/omw-1.4.zip')
         except LookupError:
-            download('omw-1.4')
+            download('omw-1.4', quiet=True)
         self.en_stopwords = stopwords.words('english')
         self.tokenizer = RegexpTokenizer(r"\w+")
         self.lemmatizer = WordNetLemmatizer()
@@ -103,8 +103,8 @@ class PreprocessingData:
     def perform_lemmatize(self, series: object) -> object:
         """Perform lemmatize on series of text.
         Need this: create better features for machine learning and NLP models.
-        Why use POS: some words are treated as a noun in the given sentence 
-        rather than a verb. To overcome come this, we use POS (Part of Speech) tags. 
+        Why use POS: some words are treated as a noun in the given sentence
+        rather than a verb. To overcome come this, we use POS (Part of Speech) tags.
         """
         return series.apply(self._lemmatize_text)
 
