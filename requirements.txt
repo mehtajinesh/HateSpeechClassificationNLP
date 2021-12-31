@@ -2,3 +2,5 @@ pandas
 pylint
 autopep8
 nltk
+sklearn
+wheel

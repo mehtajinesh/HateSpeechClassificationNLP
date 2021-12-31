@@ -12,6 +12,17 @@ def main():
     print("Preprocessing data...")
     hate_speech_classify.preprocess_data()
     hate_speech_classify.validate_loaded_data()
+    print("Splitting data...")
+    hate_speech_classify.split_data()
+    print("Generating Features...")
+    hate_speech_classify.generate_features()
+    print("Training model...")
+    hate_speech_classify.train_model()
+    print("Evaluting Model...")
+    accuracy = hate_speech_classify.evaluate_model()
+    print(f'Accuracy: {accuracy}')
+    f1_score = hate_speech_classify.f1_score()
+    print(f'F1 Score: {f1_score}')
 
 
 if __name__ == "__main__":
