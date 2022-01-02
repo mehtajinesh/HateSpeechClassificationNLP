@@ -7,6 +7,7 @@ from nltk.corpus import stopwords
 from nltk.tokenize import RegexpTokenizer
 from nltk.stem import WordNetLemmatizer
 from nltk.stem import PorterStemmer
+import re
 
 
 class PreprocessingData:
@@ -21,23 +22,39 @@ class PreprocessingData:
         try:
             find('tokenizers/stopwords.zip')
         except LookupError:
-            download('stopwords', quiet=True)
+            download('stopwords')
         try:
             find('tokenizers/punkt.zip')
         except LookupError:
-            download('punkt', quiet=True)
+            download('punkt')
         try:
             find('tokenizers/averaged_perceptron_tagger.zip')
         except LookupError:
-            download('averaged_perceptron_tagger', quiet=True)
+            download('averaged_perceptron_tagger')
         try:
             find('tokenizers/omw-1.4.zip')
         except LookupError:
-            download('omw-1.4', quiet=True)
+            download('omw-1.4')
         self.en_stopwords = stopwords.words('english')
+        other_exclusions = ["#ff", "ff", "rt"]
+        self.en_stopwords.extend(other_exclusions)
         self.tokenizer = RegexpTokenizer(r"\w+")
         self.lemmatizer = WordNetLemmatizer()
         self.porter = PorterStemmer()
+
+    def _remove_url_mentions(self, text):
+        url_regex = ('http[s]?://(?:[a-zA-Z]|[0-9]|[$-_@.&+]|'
+                     '[!*\(\),]|(?:%[0-9a-fA-F][0-9a-fA-F]))+')
+        mention_regex = '@[\w\-]+'
+        text = re.sub(url_regex, '', text)
+        text = re.sub(mention_regex, '', text)
+        return text
+
+    def perform_url_mention_data_from_tweet(self, series: object) -> object:
+        """Perform url mention data from tweet.
+        Need this: to remove url and mention data from tweet.
+        """
+        return series.apply(self._remove_url_mentions)
 
     def perform_lower_casing(self, series: object) -> object:
         """Perform lower casing on series of text.

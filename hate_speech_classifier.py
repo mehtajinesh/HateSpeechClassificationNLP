@@ -3,8 +3,11 @@ from pandas import read_csv
 from preprocessing import PreprocessingData
 from sklearn.model_selection import train_test_split
 from sklearn.feature_extraction.text import TfidfVectorizer
-from sklearn.naive_bayes import MultinomialNB
-from sklearn.metrics import f1_score
+from sklearn.metrics import classification_report
+from sklearn.model_selection import StratifiedKFold, GridSearchCV
+from sklearn.pipeline import Pipeline
+from sklearn.linear_model import LogisticRegression
+from sklearn.feature_selection import SelectFromModel
 
 
 class HateSpeechClassifier:
@@ -53,6 +56,8 @@ class HateSpeechClassifier:
         """
         preprocess = PreprocessingData()
         text_column_dataframe = self.dataframe[self.text_column]
+        text_column_dataframe = preprocess.perform_url_mention_data_from_tweet(
+            text_column_dataframe)
         text_column_dataframe = preprocess.perform_lower_casing(
             text_column_dataframe)
         text_column_dataframe = preprocess.remove_extra_whitespaces(
@@ -91,29 +96,40 @@ class HateSpeechClassifier:
         """
         Train model.
         """
-        self.model = MultinomialNB().fit(self.X_train, self.y_train)
+        pipe = Pipeline(
+            [('select', SelectFromModel(LogisticRegression(class_weight='balanced',
+                                                           penalty="l1", C=0.01, solver='liblinear'))),
+             ('model', LogisticRegression(class_weight='balanced', penalty='l2'))])
+        param_grid = [{}]  # Optionally add parameters here
+        grid_search = GridSearchCV(pipe,
+                                   param_grid,
+                                   cv=StratifiedKFold(n_splits=5).split(
+                                       self.X_train, self.y_train),
+                                   verbose=2)
+        self.model = grid_search.fit(self.X_train, self.y_train)
 
     def predict(self, text: str):
         """
         Predict.
         """
-        vectorized_text = self.tfidf_vectorizer.fit_transform(text)
+        vectorized_text = self.tfidf_vectorizer.transform([text])
         return self.model.predict(vectorized_text)
 
     def evaluate_model(self):
         """
         Evaluate.
         """
-        self.X_test = self.tfidf_vectorizer.transform(self.X_test)
-        accuracy = self.model.score(self.X_test, self.y_test)
+        transformed_test = self.tfidf_vectorizer.transform(self.X_test)
+        accuracy = self.model.score(transformed_test, self.y_test)
         return accuracy
 
-    def f1_score(self):
+    def get_classification_report(self):
         """
-        F1 score.
+        Generates classification report.
         """
-        predictions = self.model.predict(self.X_test)
-        return f1_score(self.y_test, predictions, average=None)
+        transformed_test = self.tfidf_vectorizer.transform(self.X_test)
+        predictions = self.model.predict(transformed_test)
+        return classification_report(self.y_test, predictions)
 
     def save_model(self):
         """

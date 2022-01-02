@@ -5,7 +5,15 @@ crucial for understanding public sentiment of a crowd towards another crowd.
 
 - **Why does it matter** - As a result of this quick spread of hate speech content on social media platforms, a person or a group gets disparaged on the basis of their race, gender, sexual orientation, nationality, religion, or other characteristics.
 
-- **Intention/Idea** - <!---TODO: Update the content here)-->
+- **Intention/Idea** - 
+    - Download Data
+    - Preprocess Data
+    - Generate features from data
+    - Train model
+        - For Logistic Regression
+            - Use Grid Search and 5-Fold method to find the best model
+    - Evaluate the model (F1-Score)
+     
 - **How does it help/ why does it matter** - From the practical usage point of view, this task would help many big organizations in reducing their hateful content. For example, social media companies need to flag up hateful content for moderation, while law enforcement needs to identify hateful messages and their nature as forensic evidence.
 
 ## Dataset Selection

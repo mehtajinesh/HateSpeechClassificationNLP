@@ -19,10 +19,8 @@ def main():
     print("Training model...")
     hate_speech_classify.train_model()
     print("Evaluting Model...")
-    accuracy = hate_speech_classify.evaluate_model()
-    print(f'Accuracy: {accuracy}')
-    f1_score = hate_speech_classify.f1_score()
-    print(f'F1 Score: {f1_score}')
+    report = hate_speech_classify.get_classification_report()
+    print(f'Report: {report}')
 
 
 if __name__ == "__main__":
